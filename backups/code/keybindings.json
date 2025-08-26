@@ -1,0 +1,69 @@
+// Place your key bindings in this file to override the defaults
+[
+  {
+    "key": "ctrl+m",
+    "command": "editor.action.toggleMinimap"
+  },
+  {
+    "key": "ctrl+'",
+    "command": "workbench.action.toggleMaximizedPanel"
+  },
+  {
+    "key": "alt+down",
+    "command": "editor.action.insertCursorBelow",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+up",
+    "command": "editor.action.insertCursorAbove",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+shift+down",
+    "command": "editor.action.moveLinesDownAction",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "ctrl+shift+up",
+    "command": "editor.action.moveLinesUpAction",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "ctrl+shift+c",
+    "command": "-workbench.action.terminal.openNativeConsole",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+w",
+    "command": "-workbench.action.closeWindow"
+  },
+  
+  // ── Focus Editor
+  {
+    "key": "ctrl+shift+w e",
+    "command": "workbench.action.focusActiveEditorGroup"
+  },
+
+  // ── Focus Terminal
+  {
+    "key": "ctrl+shift+w t",
+    "command": "workbench.action.terminal.focus"
+  },
+
+  // ── Focus Explorer / File Manager
+  {
+    "key": "ctrl+shift+w f",
+    "command": "workbench.view.explorer"
+  },
+  {
+    "key": "ctrl+shift+w f",
+    "command": "workbench.files.action.focusFilesExplorer",
+    "when": "explorerViewletVisible"
+  },
+
+  // ── Focus Copilot (side panel)
+  {
+    "key": "ctrl+shift+w c",
+    "command": "workbench.action.chat.open"
+  }
+]
