@@ -129,7 +129,21 @@ This is the folder with autosynced configs
 
 ## Arch
 
-Actually this can be used on any distro, but no one cares
+Actually this can be used on any distro, but no one will
+
+### Hypr
+
+- `hyprland.conf` has everything
+- `hypridle.conf + hyprlidle.conf` power the hypr_lockscreen.sh
+- `hyprpaper.conf` sets the wallpaper path
+
+#### Hyprland scripts
+
+They have a little doc inside
+
+- `app-togle.sh` helps to open only one instance of app
+- `floating-alone-watcher.sh` allows to modify single window size
+- [BROKEN] `hypr_lockscreen.sh` is planned to play screensaver
 
 ### Dunst
 

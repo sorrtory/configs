@@ -4,7 +4,7 @@ set -euo pipefail
 command -v jq >/dev/null || { echo "Install jq"; exit 1; }
 command -v socat >/dev/null || { echo "Install socat"; exit 1; }
 
-# Apps to manage
+# Apps to manage. Use `hyprctl clients` to find the correct class names
 APPS=("kitty" "org.gnome.nautilus")
 SIZES=("1000x600" "1200x800")
 
