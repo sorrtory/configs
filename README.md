@@ -24,13 +24,18 @@ Here is also a brand new Ubuntu bootstraping flow
 0. Clone configs, scripts and especially secrets, that keeps ssh key for github, etc. For example, use [scripts/sharekey.sh](https://github.com/sorrtory/scripts?tab=readme-ov-file#sharekeysh) and [scripts/get_secrets.sh](https://github.com/sorrtory/scripts?tab=readme-ov-file#get_secretssh) to share github secrets repo PAT to new machine.
 
    There is also a script that automates that (You're only need to sharekey.sh before)
-
    ```bash
-   bash -c "$(wget -qO- https://go.sorrtory.ru/bootstrap.sh)"
+   # On old computer
+   cd ~/Documents/scripts && ./sharekey.sh --secret ../secrets/secrets.token create 
    ```
 
-1. Edit a `install.conf`
-2. Install programs (I need to automate reboots too somehow)
+   ```bash
+   # On fresh computer
+   bash -c "$(wget -qO- https://raw.githubusercontent.com/sorrtory/scripts/refs/heads/master/bootstrap.sh)"
+   ```
+
+0. Edit a `install.conf`
+1. Install programs (I need to automate reboots too somehow)
 
 ```bash
 ./install.sh all
