@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "5331537eaed4a957",
+        "id": "bdbee144ead373a0",
         "type": "tabs",
         "children": [
           {
-            "id": "9edb604fd7a24642",
+            "id": "8cfb5f5a958de57a",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Knowledge/Computer/Graphics/Hello.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "Hello"
+              "title": "New tab"
             }
           }
         ]
@@ -53,7 +49,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "nginx",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -94,8 +90,8 @@
             "state": {
               "type": "calendar",
               "state": {},
-              "icon": "lucide-file",
-              "title": "Plugin no longer active"
+              "icon": "lucide-ghost",
+              "title": "calendar"
             }
           },
           {
@@ -197,8 +193,21 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "9edb604fd7a24642",
+  "active": "8cfb5f5a958de57a",
   "lastOpenFiles": [
+    "Knowledge/Computer/Linux/Utility/Docker.md",
+    "Knowledge/Computer/Linux/Utility/Find.md",
+    "Assets/Templates/Daily Note.md",
+    "Assets/Templates/Dictionary. New word.md",
+    "Assets/Templates/Dictionary. New word (efficient).md",
+    "Assets/Attachments/sql_example_vk_lec3.png",
+    "Assets/Attachments/clean arch.png",
+    "Knowledge/Computer/Linux/Utility/Gio.md",
+    "Diary/anxiety.canvas",
+    "Projects/Food/Food.md",
+    "Knowledge Database rules.md",
+    "Projects/Food",
+    "Projects/Untitled.md",
     "Knowledge/Computer/Graphics/WebGPU.md",
     "Knowledge/Computer/Graphics/Hello.md",
     "Knowledge/Computer/Graphics/Vulkan.md",
@@ -216,17 +225,8 @@
     "Knowledge/Computer/Programming/Rust/Learning resources.md",
     "Knowledge/Computer/Programming/Rust/Setup.md",
     "Knowledge/Computer/Programming/Rust/Typos.md",
-    "Knowledge/Computer/Programming/Rust/Random.md",
-    "Collections/Tech/Software/Zapier.md",
-    "Collections/Tech/Patterns/ECS.md",
-    "Knowledge/Computer/Databases/ER diagrams.md",
-    "Knowledge/Computer/Programming/Web/Expo.md",
-    "Knowledge/Computer/AI/Learning resources.md",
     "Knowledge/Computer/Graphics",
-    "Knowledge/Computer/AI/Python modules.md",
     "Knowledge/Computer/Programming/Untitled",
-    "Knowledge/Computer/Programming/Slang.md",
-    "Knowledge/Computer/Programming/Go/Tasks.md",
     "Collections/Tech/Untitled",
     "Knowledge/Computer/Devops/Ansible",
     "Knowledge/Computer/Devops/Kuber",
@@ -234,7 +234,6 @@
     "Knowledge/Computer/Graphics/OpenGL",
     "Knowledge/Computer/Programming/Rust",
     "Knowledge/Computer/Networks/Cisco/lab2",
-    "Knowledge/Computer/Networks/Cisco/lab3",
     "Assets/Attachments/Pasted image 20250830020705.png",
     "Assets/Attachments/Srum nl.png",
     "Projects/02 Songmaking/Completed/Без тебя/Without u tabs.png",
@@ -244,8 +243,6 @@
     "Assets/Attachments/IMG_20250411_150139.jpg",
     "Untitled.canvas",
     "Assets/Attachments/Idea how long I slept.png",
-    "Projects/Songmaking/Completed/Без тебя/Without u tabs.png",
-    "University/Stat-RK1.canvas",
-    "Assets/Attachments/Uni/Uni-Stat-RK1-Dima-1.png"
+    "University/Stat-RK1.canvas"
   ]
 }
