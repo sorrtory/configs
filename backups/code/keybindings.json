@@ -1,13 +1,16 @@
 // Place your key bindings in this file to override the defaults
 [
+  // ── Toggle Minimap
   {
     "key": "ctrl+m",
     "command": "editor.action.toggleMinimap"
   },
+  // ── Toggle Maximized Panel
   {
     "key": "ctrl+'",
     "command": "workbench.action.toggleMaximizedPanel"
   },
+  /// ── Multi-cursor line manipulation
   {
     "key": "alt+down",
     "command": "editor.action.insertCursorBelow",
@@ -18,6 +21,7 @@
     "command": "editor.action.insertCursorAbove",
     "when": "editorTextFocus"
   },
+  /// ── Move line up/down
   {
     "key": "ctrl+shift+down",
     "command": "editor.action.moveLinesDownAction",
@@ -28,16 +32,18 @@
     "command": "editor.action.moveLinesUpAction",
     "when": "editorTextFocus && !editorReadonly"
   },
+  // ── Disable ctrl+shift+c to open system terminal
   {
     "key": "ctrl+shift+c",
     "command": "-workbench.action.terminal.openNativeConsole",
     "when": "!terminalFocus"
   },
+  /// ── Disable ctrl+shift+w to close vs code window
   {
     "key": "ctrl+shift+w",
     "command": "-workbench.action.closeWindow"
   },
-  
+
   // ── Focus Editor
   {
     "key": "ctrl+shift+w e",
@@ -65,5 +71,24 @@
   {
     "key": "ctrl+shift+w c",
     "command": "workbench.action.chat.open"
-  }
+  },
+
+  /// Moving cursor with selection
+  {
+    "key": "alt+right",
+    "command": "editor.action.moveCarretRightAction",
+    "when": "editorFocus && (editorHasSelection || editorHasMultipleSelections "
+  },
+  {
+    "key": "alt+left",
+    "command": "editor.action.moveCarretLeftAction",
+    "when": "editorFocus && (editorHasSelection || editorHasMultipleSelections "
+  },
+
+  /// SQL tools: Execute current query
+  {
+    "key": "ctrl+enter",
+    "command": "sqltools.executeCurrentQuery",
+    "when": "editorTextFocus && editorLangId == 'sql'"
+  },
 ]
