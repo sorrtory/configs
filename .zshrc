@@ -37,9 +37,27 @@ export NVM_DIR="$HOME/.nvm"
 
 
 ##### Aliases #####
+
+# Editors
 alias bat="batcat"
 alias p!="PAGER=less"
 
+# Media
+
+## ffmpeg
+convert-to-mp3() {
+    for f in "$@"; do
+        ffmpeg -i "$f" -vn -acodec libmp3lame -qscale:a 0 -ar 48000 "${f%.*}.mp3"
+    done
+}
+
+## yt-dlp
+alias download-mp3="yt-dlp --proxy http://127.0.0.1:3128 -x --audio-format mp3 --audio-quality 0"
+alias download-mp4="yt-dlp --proxy http://127.0.0.1:3128 -S res,ext:mp4:m4a --recode mp4"
+
+# vpn
+alias vpn-up="sudo wg-quick up desktop-ubuntu"
+alias vpn-down="sudo wg-quick down desktop-ubuntu"
 
 ##### Load #####
 source $ZSH/oh-my-zsh.sh
