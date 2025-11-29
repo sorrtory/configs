@@ -24,9 +24,10 @@ Here is also a brand new Ubuntu bootstraping flow
 0. Clone configs, scripts and especially secrets, that keeps ssh key for github, etc. For example, use [scripts/sharekey.sh](https://github.com/sorrtory/scripts?tab=readme-ov-file#sharekeysh) and [scripts/get_secrets.sh](https://github.com/sorrtory/scripts?tab=readme-ov-file#get_secretssh) to share github secrets repo PAT to new machine.
 
    There is also a script that automates that (You're only need to sharekey.sh before)
+
    ```bash
    # On old computer
-   cd ~/Documents/scripts && ./sharekey.sh --secret ../secrets/secrets.token create 
+   cd ~/Documents/scripts && ./sharekey.sh --secret ../secrets/secrets.token create
    ```
 
    ```bash
@@ -34,8 +35,8 @@ Here is also a brand new Ubuntu bootstraping flow
    bash -c "$(wget -qO- https://raw.githubusercontent.com/sorrtory/scripts/refs/heads/master/bootstrap.sh)"
    ```
 
-0. Edit a `install.conf`
-1. Install programs (I need to automate reboots too somehow)
+1. Edit a `install.conf`
+2. Install programs (I need to automate reboots too somehow)
 
 ```bash
 ./install.sh all
@@ -92,6 +93,7 @@ Arch-designed. Pretty the same, but have no powerkevek10k
   - [thumbfast](https://github.com/po5/thumbfast). Display previews of the video moment ([alternatime](https://github.com/TheAMM/mpv_thumbnail_script))
   - [osc](https://github.com/po5/thumbfast/blob/vanilla-osc/player/lua/osc.lua). thumbfast depandance (default mpv osc with thumbfast support)
   - [SmartCopyPaste](https://github.com/Eisa01/mpv-scripts?tab=readme-ov-file#smartcopypaste). Paste URI to mpv
+  - [mpv cut](https://github.com/familyfriendlymikey/mpv-cut). Just cut video by `c` key
 - **shaders**
   - [anime4k](https://github.com/bloc97/Anime4K). `ctrl+1` to optimized 1080p autoscale, `ctrl+0` to disalbe
   - [ArtCNN](https://github.com/Artoriuz/ArtCNN). ???
