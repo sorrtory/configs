@@ -55,6 +55,80 @@ convert-to-mp3() {
 alias download-mp3="yt-dlp --proxy http://127.0.0.1:3128 -x --audio-format mp3 --audio-quality 0"
 alias download-mp4="yt-dlp --proxy http://127.0.0.1:3128 -S res,ext:mp4:m4a --recode mp4"
 
+# Download best available, then convert to WebM (VP9+Opus)
+download_webm() {
+  local url="$1"; shift || true
+  local proxy="http://127.0.0.1:3128"
+
+  # Capture ONLY the final filepath (one line)
+  local in
+  in="$(yt-dlp \
+    --proxy "$proxy" \
+    --no-playlist \
+    -f "bv*+ba/b" \
+    --merge-output-format mkv \
+    -o "%(title).200s [%(id)s].%(ext)s" \
+    --print after_move:filepath \
+    "$url" "$@" \
+    | tail -n 1
+  )" || return 1
+
+  if [ -z "$in" ] || [ ! -f "$in" ]; then
+    echo "Could not determine downloaded file path."
+    return 1
+  fi
+
+  local out="${in%.*}.webm"
+
+  ffmpeg -y -i "$in" \
+    -map 0 \
+    -c:v libvpx-vp9 -crf 32 -b:v 0 -row-mt 1 \
+    -c:a libopus -b:a 128k \
+    "$out" || return 1
+
+  echo "Wrote: $out"
+}
+alias download-webm='download_webm'
+
+download_webm_stream_best() {
+  local url="$1"; shift || true
+  local proxy="http://127.0.0.1:3128"
+
+  local base out tmp vpipe apipe vpid apid rc
+  base="$(yt-dlp --proxy "$proxy" --skip-download --print "%(title).120s [%(id)s]" "$url" | head -n 1)"
+  out="${base}.webm"
+
+  tmp="$(mktemp -d)"
+  vpipe="$tmp/video.pipe"
+  apipe="$tmp/audio.pipe"
+  mkfifo "$vpipe" "$apipe"
+
+  cleanup() { rm -rf "$tmp"; }
+  trap cleanup EXIT
+
+  # Pump video+audio into pipes
+  yt-dlp --proxy "$proxy" --no-playlist -f "bv*" -o - "$url" "$@" >"$vpipe" & vpid=$!
+  yt-dlp --proxy "$proxy" --no-playlist -f "ba"  -o - "$url" "$@" >"$apipe" & apid=$!
+
+  # Encode
+  ffmpeg -y \
+    -i "$vpipe" -i "$apipe" \
+    -map 0:v:0 -map 1:a:0 \
+    -c:v libvpx-vp9 -crf 32 -b:v 0 -row-mt 1 \
+    -c:a libopus -b:a 128k \
+    "$out"
+  rc=$?
+
+  # Stop downloaders if ffmpeg exits early
+  kill "$vpid" "$apid" 2>/dev/null
+  wait "$vpid" "$apid" 2>/dev/null
+
+  [ $rc -eq 0 ] && echo "Wrote: $out"
+  return $rc
+}
+alias download-webm-stream='download_webm_stream_best'
+
+
 # vpn
 alias vpn-up="sudo wg-quick up desktop-ubuntu"
 alias vpn-down="sudo wg-quick down desktop-ubuntu"
@@ -65,3 +139,8 @@ export PATH="$HOME/go/bin:$PATH"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Created by `pipx` on 2026-01-06 10:48:50
+export PATH="$PATH:/home/chinalap/.local/bin"
+
+[ -f "/home/chinalap/.ghcup/env" ] && . "/home/chinalap/.ghcup/env" # ghcup-env
