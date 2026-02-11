@@ -8,7 +8,7 @@
 "" My behaviour
 " ctrl+shift + up/down       = swap lines
 " ctrl+/                     = toggle comment
-" brackets, quotes           = doubled after 1 press
+" brackets, quotes           = doubled after 1 press [DISABLED]
 " smart Tab                  = autocomplete (shift+Tab to choose back)
 " F3                         = toggle numbers
 " :w!!                       = prompt for sudo to save (type quick)
@@ -132,12 +132,15 @@ filetype indent on
 syntax on
 
 "" Enable whitespace visualization
-set list
+" set list
 " Customize how whitespace characters are shown
 " ,eol:$ OR ↲
-set listchars=tab:»·,trail:·,extends:›,precedes:‹,nbsp:␣
+" set listchars=tab:»·,trail:·,extends:›,precedes:‹,nbsp:␣
 " ASCII option
 " set listchars=tab:>-,trail:~
+" https://stackoverflow.com/questions/4617059/showing-trailing-spaces-in-vim
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
 
 "" Lines
 " Set shift width to 4 spaces.
@@ -192,11 +195,11 @@ endfunction
 
 
 "" BRACKETS
-inoremap " ""<left>
-inoremap ' ''<left>
-inoremap ( ()<left>
-inoremap [ []<left>
-inoremap { {}<left>
+" inoremap " ""<left>
+" inoremap ' ''<left>
+" inoremap ( ()<left>
+" inoremap [ []<left>
+" inoremap { {}<left>
 inoremap {<CR> {<CR>}<ESC>O
 inoremap {;<CR> {<CR>};<ESC>O
 
