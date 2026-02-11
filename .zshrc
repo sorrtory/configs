@@ -11,7 +11,7 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_THEME="flazz"
 
 # Uncomment the following line to enable command auto-correction.
 ENABLE_CORRECTION="false"
@@ -28,15 +28,34 @@ fi
 
 ##### Plugins #####
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git copypath copyfile command-not-found zsh-autosuggestions zsh-syntax-highlighting)
-
-# Nvm autocompletion plugin, because zsh-nvm plugin isn't working
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+plugins=(git copypath copyfile command-not-found zsh-autosuggestions zsh-syntax-highlighting zsh-lazyload)
 
 
 ##### Aliases #####
+
+# Networking
+
+## vpn
+VPN_PROFILE="desktop-ubuntu"
+alias vpn-up="sudo wg-quick up $VPN_PROFILE"
+alias vpn-down="sudo wg-quick down $VPN_PROFILE"
+
+## proxy
+### remember about proxychains, torsocks for tcp proxying
+PROXY="http://127.0.0.1:3128"
+PROXY_SOCKS="socks5://127.0.0.1:1080"
+### socks5h for dns resolution through proxy, but it doesn't work with all applications
+alias proxy-on="export http_proxy=$PROXY; export https_proxy=$PROXY; export all_proxy=$PROXY_SOCKS"
+alias proxy-off="unset http_proxy; unset https_proxy; unset all_proxy"
+
+### lxd wifi interface
+init_wifi_proxy(){
+    INTEFACE=wlp1s0
+    sudo iptables -t nat -A POSTROUTING -o $INTEFACE -j MASQUERADE
+    sudo iptables -A FORWARD -i lxdbr0 -o $INTEFACE -j ACCEPT
+    sudo iptables -A FORWARD -i $INTEFACE -o lxdbr0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+}
+alias iwp=init_wifi_proxy
 
 # Editors
 alias bat="batcat"
@@ -46,101 +65,56 @@ alias p!="PAGER=less"
 
 ## ffmpeg
 convert-to-mp3() {
+    # Convert given media files to mp3
     for f in "$@"; do
         ffmpeg -i "$f" -vn -acodec libmp3lame -qscale:a 0 -ar 48000 "${f%.*}.mp3"
     done
 }
 
 ## yt-dlp
-alias download-mp3="yt-dlp --proxy http://127.0.0.1:3128 -x --audio-format mp3 --audio-quality 0"
-alias download-mp4="yt-dlp --proxy http://127.0.0.1:3128 -S res,ext:mp4:m4a --recode mp4"
-
-# Download best available, then convert to WebM (VP9+Opus)
-download_webm() {
-  local url="$1"; shift || true
-  local proxy="http://127.0.0.1:3128"
-
-  # Capture ONLY the final filepath (one line)
-  local in
-  in="$(yt-dlp \
-    --proxy "$proxy" \
-    --no-playlist \
-    -f "bv*+ba/b" \
-    --merge-output-format mkv \
-    -o "%(title).200s [%(id)s].%(ext)s" \
-    --print after_move:filepath \
-    "$url" "$@" \
-    | tail -n 1
-  )" || return 1
-
-  if [ -z "$in" ] || [ ! -f "$in" ]; then
-    echo "Could not determine downloaded file path."
-    return 1
-  fi
-
-  local out="${in%.*}.webm"
-
-  ffmpeg -y -i "$in" \
-    -map 0 \
-    -c:v libvpx-vp9 -crf 32 -b:v 0 -row-mt 1 \
-    -c:a libopus -b:a 128k \
-    "$out" || return 1
-
-  echo "Wrote: $out"
-}
-alias download-webm='download_webm'
-
-download_webm_stream_best() {
-  local url="$1"; shift || true
-  local proxy="http://127.0.0.1:3128"
-
-  local base out tmp vpipe apipe vpid apid rc
-  base="$(yt-dlp --proxy "$proxy" --skip-download --print "%(title).120s [%(id)s]" "$url" | head -n 1)"
-  out="${base}.webm"
-
-  tmp="$(mktemp -d)"
-  vpipe="$tmp/video.pipe"
-  apipe="$tmp/audio.pipe"
-  mkfifo "$vpipe" "$apipe"
-
-  cleanup() { rm -rf "$tmp"; }
-  trap cleanup EXIT
-
-  # Pump video+audio into pipes
-  yt-dlp --proxy "$proxy" --no-playlist -f "bv*" -o - "$url" "$@" >"$vpipe" & vpid=$!
-  yt-dlp --proxy "$proxy" --no-playlist -f "ba"  -o - "$url" "$@" >"$apipe" & apid=$!
-
-  # Encode
-  ffmpeg -y \
-    -i "$vpipe" -i "$apipe" \
-    -map 0:v:0 -map 1:a:0 \
-    -c:v libvpx-vp9 -crf 32 -b:v 0 -row-mt 1 \
-    -c:a libopus -b:a 128k \
-    "$out"
-  rc=$?
-
-  # Stop downloaders if ffmpeg exits early
-  kill "$vpid" "$apid" 2>/dev/null
-  wait "$vpid" "$apid" 2>/dev/null
-
-  [ $rc -eq 0 ] && echo "Wrote: $out"
-  return $rc
-}
-alias download-webm-stream='download_webm_stream_best'
+alias download-mp3="yt-dlp --proxy $PROXY -x --audio-format mp3 --audio-quality 0"
+alias download-mp4="yt-dlp --proxy $PROXY -S res,ext:mp4:m4a --recode mp4"
 
 
-# vpn
-alias vpn-up="sudo wg-quick up desktop-ubuntu"
-alias vpn-down="sudo wg-quick down desktop-ubuntu"
+
 
 ##### Load #####
+# zsh
 source $ZSH/oh-my-zsh.sh
-export PATH="$HOME/go/bin:$PATH"
 
+# lazyload
+## Nvm autocompletion plugin, because zsh-nvm plugin isn't working
+lazyload nvm node npm npx -- '
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+  autoload -U +X bashcompinit && bashcompinit
+  [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+'
+
+# powerlevel10k
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# Created by `pipx` on 2026-01-06 10:48:50
-export PATH="$PATH:/home/chinalap/.local/bin"
 
-[ -f "/home/chinalap/.ghcup/env" ] && . "/home/chinalap/.ghcup/env" # ghcup-env
+##### Env #####
+
+## ptyxis/horizon theme support
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=244'
+
+## go bin
+export PATH="$HOME/go/bin:$PATH"
+
+# Created by `pipx` on 2026-01-06 10:48:50
+export PATH="$PATH:$HOME/.local/bin"
+
+[ -f "$HOME/.ghcup/env" ] && . "$HOME/.ghcup/env" # ghcup-env
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env" # cargo
+
+# pnpm
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
