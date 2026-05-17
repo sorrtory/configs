@@ -23,6 +23,14 @@ endif
 set mouse=a
 set ttymouse=sgr
 set balloonevalterm
+"" Make mouse wheel scroll one line at a time
+nnoremap <ScrollWheelUp>   <C-Y>
+nnoremap <ScrollWheelDown> <C-E>
+inoremap <ScrollWheelUp>   <C-O><C-Y>
+inoremap <ScrollWheelDown> <C-O><C-E>
+vnoremap <ScrollWheelUp>   <C-Y>
+vnoremap <ScrollWheelDown> <C-E>
+
 " Styled and colored underline support
 let &t_AU = "\e[58:5:%dm"
 let &t_8u = "\e[58:2:%lu:%lu:%lum"
