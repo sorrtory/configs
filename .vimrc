@@ -1,6 +1,6 @@
 "" ------------------------------------
 "" usefull tips
-" :set <option>!             = disable option 
+" :set <option>!             = disable option
 " >> / <<                    = change indents
 " ctrl+x ctrl+f              = suggest file path
 " Ctrl+o :norm 8ia Return    = Enter 8 "a"
@@ -13,6 +13,13 @@
 " F3                         = toggle numbers
 " :w!!                       = prompt for sudo to save (type quick)
 "" ------------------------------------
+
+"""" Basic compatibility
+" Disable compatibility with vi first, before all mappings/options.
+if &compatible
+    set nocompatible
+endif
+
 " Kitty support: https://sw.kovidgoyal.net/kitty/faq/#using-a-color-theme-with-a-background-color-does-not-work-well-in-vim
 
 if &term ==# "xterm-kitty"
@@ -20,10 +27,26 @@ if &term ==# "xterm-kitty"
 endif
 
 " Mouse support
-set mouse=a
-set ttymouse=sgr
-set balloonevalterm
+if exists('+mouse')
+    set mouse=a
+endif
+
+" SGR mouse is nicer, but some old remote Vim builds do not have it.
+if exists('+ttymouse')
+    try
+        set ttymouse=sgr
+    catch
+        silent! set ttymouse=xterm2
+    endtry
+endif
+
+" Terminal balloons are optional, so do not break old Vim without them.
+if exists('+balloonevalterm')
+    set balloonevalterm
+endif
+
 "" Make mouse wheel scroll one line at a time
+" Works on old Vim where 'mousescroll' does not exist.
 nnoremap <ScrollWheelUp>   <C-Y>
 nnoremap <ScrollWheelDown> <C-E>
 inoremap <ScrollWheelUp>   <C-O><C-Y>
@@ -31,49 +54,61 @@ inoremap <ScrollWheelDown> <C-O><C-E>
 vnoremap <ScrollWheelUp>   <C-Y>
 vnoremap <ScrollWheelDown> <C-E>
 
+"" Terminal extras
+" Guarded because this file is used as a drop in on random remote servers.
+" Some Vim builds know these terminal codes, some do not.
+
+function! s:SafeTermcap(name, value)
+    try
+        execute 'let &' . a:name . ' = ' . string(a:value)
+    catch
+    endtry
+endfunction
+
 " Styled and colored underline support
-let &t_AU = "\e[58:5:%dm"
-let &t_8u = "\e[58:2:%lu:%lu:%lum"
-let &t_Us = "\e[4:2m"
-let &t_Cs = "\e[4:3m"
-let &t_ds = "\e[4:4m"
-let &t_Ds = "\e[4:5m"
-let &t_Ce = "\e[4:0m"
+call s:SafeTermcap('t_AU', "\e[58:5:%dm")
+call s:SafeTermcap('t_8u', "\e[58:2:%lu:%lu:%lum")
+call s:SafeTermcap('t_Us', "\e[4:2m")
+call s:SafeTermcap('t_Cs', "\e[4:3m")
+call s:SafeTermcap('t_ds', "\e[4:4m")
+call s:SafeTermcap('t_Ds', "\e[4:5m")
+call s:SafeTermcap('t_Ce', "\e[4:0m")
 " Strikethrough
-let &t_Ts = "\e[9m"
-let &t_Te = "\e[29m"
+call s:SafeTermcap('t_Ts', "\e[9m")
+call s:SafeTermcap('t_Te', "\e[29m")
 " Truecolor support
-let &t_8f = "\e[38:2:%lu:%lu:%lum"
-let &t_8b = "\e[48:2:%lu:%lu:%lum"
-let &t_RF = "\e]10;?\e\\"
-let &t_RB = "\e]11;?\e\\" " This is for color
+call s:SafeTermcap('t_8f', "\e[38:2:%lu:%lu:%lum")
+call s:SafeTermcap('t_8b', "\e[48:2:%lu:%lu:%lum")
+call s:SafeTermcap('t_RF', "\e]10;?\e\\")
+call s:SafeTermcap('t_RB', "\e]11;?\e\\") " This is for color
 " Bracketed paste
-let &t_BE = "\e[?2004h"
-let &t_BD = "\e[?2004l"
-let &t_PS = "\e[200~"
-let &t_PE = "\e[201~"
+call s:SafeTermcap('t_BE', "\e[?2004h")
+call s:SafeTermcap('t_BD', "\e[?2004l")
+call s:SafeTermcap('t_PS', "\e[200~")
+call s:SafeTermcap('t_PE', "\e[201~")
 " Cursor control
-let &t_RC = "\e[?12$p"
-let &t_SH = "\e[%d q"
-let &t_RS = "\eP$q q\e\\"
-let &t_SI = "\e[5 q"
-let &t_SR = "\e[3 q"
-let &t_EI = "\e[1 q"
-let &t_VS = "\e[?12L"
+call s:SafeTermcap('t_RC', "\e[?12$p")
+call s:SafeTermcap('t_SH', "\e[%d q")
+call s:SafeTermcap('t_RS', "\eP$q q\e\\")
+call s:SafeTermcap('t_SI', "\e[5 q")
+call s:SafeTermcap('t_SR', "\e[3 q")
+call s:SafeTermcap('t_EI', "\e[1 q")
+call s:SafeTermcap('t_VS', "\e[?12L")
 " Focus tracking
-let &t_fe = "\e[?1004h"
-let &t_fd = "\e[?1004l"
-execute "set <FocusGained>=\<Esc>[I"
-execute "set <FocusLost>=\<Esc>[O"
+call s:SafeTermcap('t_fe', "\e[?1004h")
+call s:SafeTermcap('t_fd', "\e[?1004l")
+silent! execute "set <FocusGained>=\<Esc>[I"
+silent! execute "set <FocusLost>=\<Esc>[O"
 " Window title
-let &t_ST = "\e[22;2t"
-let &t_RT = "\e[23;2t"
+call s:SafeTermcap('t_ST', "\e[22;2t")
+call s:SafeTermcap('t_RT', "\e[23;2t")
 
 " vim hardcodes background color erase even if the terminfo file does
 " not contain bce. This causes incorrect background rendering when
 " using a color theme with a background color in terminals such as
 " kitty that do not support background color erase.
-let &t_ut=''
+call s:SafeTermcap('t_ut', '')
+
 "" ------------------------------------
 
 """" Basic settings
@@ -84,23 +119,26 @@ autocmd BufReadPost *
      \ endif
 
 "" Trigger the following function after entering the specified mode
-" Trigger NormalModeEnter() when entering Normal mode
-augroup NormalModeCommands
-  autocmd!
-  autocmd ModeChanged *:n call NormalModeEnter()
-augroup END
+" ModeChanged is not available in old Vim, so keep this guarded.
+if exists('##ModeChanged')
+    " Trigger NormalModeEnter() when entering Normal mode
+    augroup NormalModeCommands
+      autocmd!
+      autocmd ModeChanged *:n call NormalModeEnter()
+    augroup END
 
-" Trigger InsertModeEnter() when entering Insert mode
-augroup InsertModeCommands
-  autocmd!
-  autocmd ModeChanged *:i call InsertModeEnter()
-augroup END
+    " Trigger InsertModeEnter() when entering Insert mode
+    augroup InsertModeCommands
+      autocmd!
+      autocmd ModeChanged *:i call InsertModeEnter()
+    augroup END
 
-" Trigger VisualModeEnter() when entering Visual mode
-augroup VisualModeCommands
-  autocmd!
-  autocmd ModeChanged *:v call VisualModeEnter()
-augroup END
+    " Trigger VisualModeEnter() when entering Visual mode
+    augroup VisualModeCommands
+      autocmd!
+      autocmd ModeChanged *:v call VisualModeEnter()
+    augroup END
+endif
 
 function! NormalModeEnter()
 endfunction
@@ -118,26 +156,72 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
 "" LINENUMBERS
 " Mouse copy without numbers with ctrl
-set number
-highlight LineNr ctermfg=grey
-set cursorline
-set cursorlineopt=number
-highlight CursorLineNr ctermfg=white cterm=bold
+" Hybrid numbers: current line = absolute, other lines = relative.
+if exists('+number')
+    set number
+endif
 
-" Toggle numbers by <F3> 
-noremap <F3> :set number!<CR>
-inoremap <F3> <C-o>:set number!<CR>
-cnoremap <F3> <C-o>:set number!<CR>
+if exists('+relativenumber')
+    set relativenumber
+endif
+
+if exists('+cursorline')
+    set cursorline
+endif
+
+" cursorlineopt is nice, but old remote Vim may not have it.
+if exists('+cursorlineopt')
+    set cursorlineopt=number
+endif
+
+"" Hide the left sign column/gutter by default
+if exists('+signcolumn')
+    set signcolumn=no
+endif
+
+highlight LineNr ctermfg=DarkGrey
+highlight CursorLineNr ctermfg=White cterm=bold
+
+" In insert mode, keep normal numbers so the screen is less jumpy.
+augroup NumberMode
+  autocmd!
+  if exists('+relativenumber')
+      autocmd InsertEnter * if get(g:, 'numbers_enabled', 1) | set norelativenumber | endif
+      autocmd InsertLeave * if get(g:, 'numbers_enabled', 1) | set relativenumber | endif
+  endif
+augroup END
+
+function! ToggleNumbers()
+    if exists('+number') && &number
+        set nonumber
+        if exists('+relativenumber')
+            set norelativenumber
+        endif
+        let g:numbers_enabled = 0
+    else
+        if exists('+number')
+            set number
+        endif
+        if exists('+relativenumber')
+            set relativenumber
+        endif
+        let g:numbers_enabled = 1
+    endif
+endfunction
+
+" Toggle numbers by <F3>
+nnoremap <F3> :call ToggleNumbers()<CR>
+inoremap <F3> <C-o>:call ToggleNumbers()<CR>
 
 """ SYNTAX
-" Disable compatibility with vi which can cause unexpected issues.
-set nocompatible
 " Enable type file detection. Vim will be able to try to detect the type of file in use.
 filetype on
 " Load an indent file for the detected file type.
 filetype indent on
 " Turn syntax highlighting on.
-syntax on
+if has('syntax')
+    syntax on
+endif
 
 "" Enable whitespace visualization
 " set list
@@ -147,8 +231,10 @@ syntax on
 " ASCII option
 " set listchars=tab:>-,trail:~
 " https://stackoverflow.com/questions/4617059/showing-trailing-spaces-in-vim
-highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
+if has('syntax')
+    highlight ExtraWhitespace ctermbg=red guibg=red
+    match ExtraWhitespace /\s\+$/
+endif
 
 "" Lines
 " Set shift width to 4 spaces.
@@ -164,9 +250,14 @@ set wrapmargin=0
 set wrap
 set linebreak
 "" Linebreak style
-set cpo=n
+" Do not replace all cpoptions; only remove the flag we do not want.
+set cpoptions-=n
 " ↳
-let &showbreak = '↪ '
+if has('multi_byte') && &encoding =~? 'utf-8'
+    let &showbreak = '↪ '
+else
+    let &showbreak = '> '
+endif
 
 """" AUTOCOMPLETE
 """ Tab for autocompleted
@@ -396,8 +487,8 @@ function! MoveToNextLine()
 endfunction
 
 " Normal mode
-nnoremap <C-S-Up> <Esc>:call MoveToPrevLine()<CR>i<Esc>
-nnoremap <C-S-Down> <Esc>:call MoveToNextLine()<CR>i<Esc>
+nnoremap <C-S-Up> :call MoveToPrevLine()<CR>
+nnoremap <C-S-Down> :call MoveToNextLine()<CR>
 
 " Insert mode
 inoremap <C-S-Up> <Esc>:call MoveToPrevLine()<CR>i
@@ -406,7 +497,9 @@ inoremap <C-S-Down> <Esc>:call MoveToNextLine()<CR>i
 
 """ WILDMENU
 " Enable auto completion menu after pressing TAB.
-set wildmenu
+if exists('+wildmenu')
+    set wildmenu
+endif
 
 set complete=.,w,b,u,t  " . = current buffer, w = buffers, b = keywords, u = unloaded, t = tags
 set path+=**
@@ -418,17 +511,21 @@ set wildmode=list:longest
 " Wildmenu will ignore files with these extensions.
 set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx,*.o,*.obj,*.bak,*.swp
 
-set wildcharm=<C-Z>
+if exists('+wildcharm')
+    set wildcharm=<C-Z>
+endif
 " cnoremap <expr> <up> wildmenumode() ? "\<left>" : "\<up>"
 " cnoremap <expr> <down> wildmenumode() ? "\<right>" : "\<down>"
 " cnoremap <expr> <left> wildmenumode() ? "\<up>" : "\<left>"
 " cnoremap <expr> <right> wildmenumode() ? " \<bs>\<C-Z>" : "\<right>"
 
 " Autosuggest file paths with arrows
-cnoremap <expr> <Esc>[A wildmenumode() ? "\<left>" : "\<Up>"
-cnoremap <expr> <Esc>[B wildmenumode() ? "\<right>" : "\<Down>"
-cnoremap <expr> <Esc>[C wildmenumode() ? " \<bs>\<C-Z>" : "\<Right>"
-cnoremap <expr> <Esc>[D wildmenumode() ? "\<up>" : "\<Left>"
+if exists('*wildmenumode')
+    cnoremap <expr> <Esc>[A wildmenumode() ? "\<left>" : "\<Up>"
+    cnoremap <expr> <Esc>[B wildmenumode() ? "\<right>" : "\<Down>"
+    cnoremap <expr> <Esc>[C wildmenumode() ? " \<bs>\<C-Z>" : "\<Right>"
+    cnoremap <expr> <Esc>[D wildmenumode() ? "\<up>" : "\<Left>"
+endif
 
 """" SEARCHING
 " While searching though a file incrementally highlight matching characters as you type.
@@ -469,7 +566,7 @@ set statusline+=%h
 set statusline+=%r
 set statusline+=\ 
 set statusline+=%3*
-set statusline+=%{b:gitbranch}
+set statusline+=%{get(b:,'gitbranch','')}
 set statusline+=%1*
 set statusline+=\ 
 set statusline+=%4*
@@ -517,7 +614,11 @@ function! StatuslineGitBranch()
   if &modifiable
     try
       let l:dir=expand('%:p:h')
-      let l:gitrevparse = system("git -C ".l:dir." rev-parse --abbrev-ref HEAD")
+      if empty(l:dir)
+        return
+      endif
+
+      let l:gitrevparse = system('git -C ' . shellescape(l:dir) . ' rev-parse --abbrev-ref HEAD 2>/dev/null')
       if !v:shell_error
         let b:gitbranch="(".substitute(l:gitrevparse, '\n', '', 'g').") "
       endif
@@ -530,4 +631,5 @@ augroup GetGitBranch
   autocmd!
   autocmd VimEnter,WinEnter,BufEnter * call StatuslineGitBranch()
 augroup END
+
 
