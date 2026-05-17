@@ -48,27 +48,25 @@ PROXY_SOCKS="socks5://127.0.0.1:1080"
 alias proxy-on="export http_proxy=$PROXY; export https_proxy=$PROXY; export all_proxy=$PROXY_SOCKS"
 alias proxy-off="unset http_proxy; unset https_proxy; unset all_proxy"
 
-### lxd wifi interface
-init_wifi_proxy(){
-    INTEFACE=wlp1s0
-    sudo iptables -t nat -A POSTROUTING -o $INTEFACE -j MASQUERADE
-    sudo iptables -A FORWARD -i lxdbr0 -o $INTEFACE -j ACCEPT
-    sudo iptables -A FORWARD -i $INTEFACE -o lxdbr0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+### lxd bridge interface
+init_bridge_proxy(){
+    if [[ -z $INTERFACE ]]; then
+        echo "Set INTERFACE var first!"
+    else
+        sudo iptables -t nat -A POSTROUTING -o $INTERFACE -j MASQUERADE
+        sudo iptables -A FORWARD -i lxdbr0 -o $INTERFACE -j ACCEPT
+        sudo iptables -A FORWARD -i $INTERFACE -o lxdbr0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+    fi
 }
-alias iwp=init_wifi_proxy
+alias ibp=init_bridge_proxy
+
+### blocked
+# alias tldr="http_proxy=$PROXY https_proxy=$PROXY all_proxy=$PROXY_SOCKS tldr"
 
 # Editors
 alias bat="batcat"
 alias p!="PAGER=less"
 
-## yazi
-function y() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-	command yazi "$@" --cwd-file="$tmp"
-	IFS= read -r -d '' cwd < "$tmp"
-	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
-	rm -f -- "$tmp"
-}
 
 # Media
 
@@ -85,21 +83,113 @@ alias download-mp3="yt-dlp --proxy $PROXY -x --audio-format mp3 --audio-quality 
 alias download-mp4="yt-dlp --proxy $PROXY -S res,ext:mp4:m4a --recode mp4"
 
 
+# System
+alias path="readlink -f"
+alias fd="fdfind"
 
+## navigation
+NAV="$HOME/Documents/scripts/navigation.sh"
+
+# cd into selected directory under HOME
+c() {
+  local dir
+  dir="$("$NAV" dir "$HOME")" || return
+  [[ -n "$dir" ]] && cd "$dir"
+}
+
+# cd into selected directory under current directory
+cc() {
+  local dir
+  dir="$("$NAV" dir "$PWD")" || return
+  [[ -n "$dir" ]] && cd "$dir"
+}
+
+# edit file with default editor
+e() {
+  "$NAV" edit "$HOME"
+}
+
+# edit file under current directory
+ee() {
+  "$NAV" edit "$PWD"
+}
+
+# explicit editors
+ec() {
+  "$NAV" edit "$HOME" code
+}
+
+es() {
+  "$NAV" edit "$HOME" subl
+}
+
+ev() {
+  "$NAV" edit "$HOME" nvim
+}
+
+evim() {
+  "$NAV" edit "$HOME" vim
+}
+
+# open any file with default desktop app
+o() {
+  "$NAV" open "$HOME"
+}
+
+# open media
+oi() {
+  "$NAV" open-image "$HOME"
+}
+
+ov() {
+  "$NAV" open-video "$HOME"
+}
+
+om() {
+  "$NAV" open-music "$HOME"
+}
+
+## remove
+alias rm_node_modules="find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +"
+
+## yazi
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+	rm -f -- "$tmp"
+}
+
+## docker
+### We can use .docker/config.json for that too
+alias dps='docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Ports}}"'
+alias dpss='docker ps --format "table {{.Names}}\t{{.Image}}\t{{.ID}}\t{{.RunningFor}}\t{{.Status}}\t{{.Size}}\t{{.Ports}}"'
 
 ##### Load #####
+
+# Node
+
+## lazyload
+## Nvm autocompletion plugin, because zsh-nvm plugin isn't working
+# lazyload nvm node npm npx -- '
+  # export NVM_DIR="$HOME/.nvm"
+  # [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+#
+  # autoload -U +X bashcompinit && bashcompinit
+  # [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+# '
+
+## fnm
+FNM_PATH="/home/z/.local/share/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="$FNM_PATH:$PATH"
+  eval "$(fnm env --shell zsh)"
+fi
+
+
 # zsh
 source $ZSH/oh-my-zsh.sh
-
-# lazyload
-## Nvm autocompletion plugin, because zsh-nvm plugin isn't working
-lazyload nvm node npm npx -- '
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-
-  autoload -U +X bashcompinit && bashcompinit
-  [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
-'
 
 # powerlevel10k
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
@@ -127,3 +217,17 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+
+export PATH=$PATH:/home/z/.spicetify
+
+
+# bun completions
+[ -s "/home/z/.bun/_bun" ] && source "/home/z/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# zoxide completions
+eval "$(zoxide init zsh)"

@@ -64,6 +64,28 @@ As the result, the script with the default installation config should download s
 - Toggle numbers by `F3`
 - Add ctrl+/ comments (file type : comment symbols)
 
+#### Cheatsheat
+
+https://vim.rtorr.com/
+
+> TODO: refactor into table
+
+- use c indtead of d + i
+- ciB / yiB = remove / copy everything inside curvy brackets
+- ciw = remove word
+- ct. = remove everything up to dot
+- use vimdiff:
+
+    ```
+    ]c   next diff
+    [c   previous diff
+    do   get other version into current window
+    dp   put current version into other window
+    :diffget LOCAL   keep local/current branch version
+    :diffget REMOTE  take incoming branch version
+    :diffget BASE    take base version
+    ```
+
 ### zshrc
 
 #### 1
@@ -73,6 +95,27 @@ As the result, the script with the default installation config should download s
 - `plugins=(git command-not-found zsh-autosuggestions zsh-syntax-highlighting)`
 - Aliases
 - Meslo NG (See vs code font [problem](./backups/backups.md#vs-code))
+
+##### Aliases
+
+```
+c      # cd fuzzy
+cc     # cd fuzzy from current dir
+
+e      # edit with default editor
+ee     # edit from current dir
+
+ec     # edit with VS Code
+es     # edit with Sublime
+ev     # edit with nvim
+evim   # edit with vim
+
+o      # open any file
+oi     # open image
+ov     # open video
+om     # open music
+```
+
 
 #### 2
 
@@ -126,6 +169,13 @@ Arch-designed. Pretty the same, but have no powerkevek10k
   | Templater: Insert Assets/Templates/Dictionary. New word.md | Alt + W          |
   | Toggle Live Preview/Source mode                            | Ctrl + Shift + E |
   | Toggle right sidebar                                       | Ctrl + '         |
+  | Paste `Assets/Thought` template                            | Alt + T            |
+  | Navigate back| Alt + <-            |
+  | Navigate forward                            | Alt + ->            |
+  | Quick switcher: Open| Ctrl + Tab            |
+  | Go to next tab| Ctrl + PgUp            |
+  | Go to previous tab| Ctrl + Shift + Tab / Ctrl + PgDn            |
+
 
 ### backups
 
@@ -174,6 +224,17 @@ Hotkeys
 
 Lean and blue
 
-## MFW never used then
+### yazi
 
-![Tight and blue](https://i.pinimg.com/736x/31/af/4a/31af4aa48effe217c831fcbc24d4d51e.jpg)
+[Plugins](https://yazi-rs.github.io/docs/resources):
+
+- `Alt + y` = [copy file contents](https://yazi-rs.github.io/docs/resources/#:~:text=copy%2Dfile%2Dcontents%2Eyazi%20%2D%20A%20simple%20plugin%20to%20copy%20file%20contents%20just%20from%20Yazi%20without%20going%20into%20editor)
+
+To install plugins with `snap` pkg
+
+```bash
+/snap/yazi/current/ya pkg add grappas/wl-clipboard
+```
+
+[## MFW never used then ![Tight and blue](https://i.pinimg.com/736x/31/af/4a/31af4aa48effe217c831fcbc24d4d51e.jpg)]: #
+
