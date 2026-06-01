@@ -68,6 +68,12 @@ alias bat="batcat"
 alias p!="PAGER=less"
 
 
+# tmux
+alias t="tmux new -A -s main"
+ssht() {
+  ssh -t "$1" 'tmux new -A -s ssh-main'
+}
+
 # Media
 
 ## ffmpeg
