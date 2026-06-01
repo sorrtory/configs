@@ -211,6 +211,12 @@ Ctrl+Space  manually open completion
 Ctrl+e      close completion
 ```
 
+- lint - nvim-lint
+
+```
+Space ll    lint current file
+```
+
 ### zshrc
 
 #### 1
