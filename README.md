@@ -76,15 +76,140 @@ https://vim.rtorr.com/
 - ct. = remove everything up to dot
 - use vimdiff:
 
-    ```
-    ]c   next diff
-    [c   previous diff
-    do   get other version into current window
-    dp   put current version into other window
-    :diffget LOCAL   keep local/current branch version
-    :diffget REMOTE  take incoming branch version
-    :diffget BASE    take base version
-    ```
+  ```
+  ]c   next diff
+  [c   previous diff
+  do   get other version into current window
+  dp   put current version into other window
+  :diffget LOCAL   keep local/current branch version
+  :diffget REMOTE  take incoming branch version
+  :diffget BASE    take base version
+  ```
+
+### nvim
+
+- Nice [article](https://lazyvim-ambitious-devs.phillips.codes/) about LazyVim and vim basics
+
+- lazy.nvim
+
+#### Installation steps
+
+```
+Step 1: lazy.nvim + theme ([onedark:darker](https://github.com/navarasu/onedark.nvim))
+Step 2: add telescope
+Step 3: add treesitter
+Step 4: add LSP
+Step 5: then add Mason
+```
+
+- telescope
+
+```
+Ctrl+p      find files
+Ctrl+f      search inside current file
+
+Space fg    search whole project
+Space fb    buffers
+Space fr    recent files
+Space fc    commands
+```
+
+- treesitter is kinda broken + slow (really? can't see that). But we configure it to support all major langs
+- [TODO comments](https://github.com/folke/todo-comments.nvim)
+
+```
+Space ft   search TODOs with Telescope
+Space tq   put TODOs into quickfix
+```
+
+- oil
+
+```
+-          open parent directory
+Space e    open Oil
+
+-- inside oil
+Enter      open file/directory
+-          go up by dir
+q          close Oil
+:w         apply filesystem edits
+```
+
+- neotree
+
+```
+Ctrl+b     toggle Neo-tree sidebar
+```
+
+- vim-tmux-navigator
+
+in accord with `tmux` config
+
+```
+Ctrl+h  left
+Ctrl+j  down
+Ctrl+k  up
+Ctrl+l  right
+```
+
+- gitsigns
+
+```
+h          previous change
+
+Space hp    preview hunk
+Space hs    stage hunk
+Space hu    undo stage hunk
+Space hr    reset hunk
+
+Space hS    stage whole buffer
+Space hR    reset whole buffer
+Space hb    blame current line
+Space hd    diff current file
+```
+
+- lualine
+
+- LSP
+  - mason
+  - mason-lspconfig
+  - nvim-lspconfig
+
+```
+K           hover
+gd          definition
+gD          declaration
+gi          implementation
+gr          references
+gt          type definition
+
+Space rn    rename
+Space ca    code action
+Space ls    signature help
+Space lo    organize imports for TS/JS
+Space li    toggle inlay hints
+
+[d          previous diagnostic
+]d          next diagnostic
+Space ld    line diagnostics
+Space lq    diagnostics list
+```
+
+- conform - formatter
+
+```
+Space lf    format buffer
+```
+
+- blink - complitions
+
+```
+Tab         accept completion / snippet next / normal tab
+Shift+Tab   snippet previous / normal shift-tab
+Enter       accept too, because preset = "enter"
+Ctrl+Space  manually open completion
+Ctrl+e      close completion
+```
 
 ### zshrc
 
@@ -115,7 +240,6 @@ oi     # open image
 ov     # open video
 om     # open music
 ```
-
 
 #### 2
 
@@ -154,28 +278,27 @@ Arch-designed. Pretty the same, but have no powerkevek10k
   - Excalidraw
 - Hotkeys
 
-  | Action                                                     | Hotkey           |
-  | ---------------------------------------------------------- | ---------------- |
-  | Add cursor above                                           | Alt + ↑          |
-  | Add cursor below                                           | Alt + ↓          |
-  | Files: Reveal current file in navigation                   | Alt + F          |
-  | Git: Commit-and-sync                                       | Ctrl + Shift + S |
-  | Git: Commit-and-sync and then close Obsidian               | Ctrl + Escape    |
-  | Move line up                                               | Ctrl + Shift + ↑ |
-  | Move line down                                             | Ctrl + Shift + ↓ |
-  | Show in system explorer                                    | Ctrl + Alt + R   |
-  | Table: Add row after                                       | Ctrl + R         |
-  | Table: Delete row                                          | Ctrl + Shift + R |
-  | Templater: Insert Assets/Templates/Dictionary. New word.md | Alt + W          |
-  | Toggle Live Preview/Source mode                            | Ctrl + Shift + E |
-  | Toggle right sidebar                                       | Ctrl + '         |
-  | Paste `Assets/Thought` template                            | Alt + T            |
-  | Navigate back| Alt + <-            |
-  | Navigate forward                            | Alt + ->            |
-  | Quick switcher: Open| Ctrl + Tab            |
-  | Go to next tab| Ctrl + PgUp            |
-  | Go to previous tab| Ctrl + Shift + Tab / Ctrl + PgDn            |
-
+  | Action                                                     | Hotkey                           |
+  | ---------------------------------------------------------- | -------------------------------- |
+  | Add cursor above                                           | Alt + ↑                          |
+  | Add cursor below                                           | Alt + ↓                          |
+  | Files: Reveal current file in navigation                   | Alt + F                          |
+  | Git: Commit-and-sync                                       | Ctrl + Shift + S                 |
+  | Git: Commit-and-sync and then close Obsidian               | Ctrl + Escape                    |
+  | Move line up                                               | Ctrl + Shift + ↑                 |
+  | Move line down                                             | Ctrl + Shift + ↓                 |
+  | Show in system explorer                                    | Ctrl + Alt + R                   |
+  | Table: Add row after                                       | Ctrl + R                         |
+  | Table: Delete row                                          | Ctrl + Shift + R                 |
+  | Templater: Insert Assets/Templates/Dictionary. New word.md | Alt + W                          |
+  | Toggle Live Preview/Source mode                            | Ctrl + Shift + E                 |
+  | Toggle right sidebar                                       | Ctrl + '                         |
+  | Paste `Assets/Thought` template                            | Alt + T                          |
+  | Navigate back                                              | Alt + <-                         |
+  | Navigate forward                                           | Alt + ->                         |
+  | Quick switcher: Open                                       | Ctrl + Tab                       |
+  | Go to next tab                                             | Ctrl + PgUp                      |
+  | Go to previous tab                                         | Ctrl + Shift + Tab / Ctrl + PgDn |
 
 ### backups
 
@@ -237,4 +360,3 @@ To install plugins with `snap` pkg
 ```
 
 [## MFW never used then ![Tight and blue](https://i.pinimg.com/736x/31/af/4a/31af4aa48effe217c831fcbc24d4d51e.jpg)]: #
-
