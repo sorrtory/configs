@@ -191,7 +191,8 @@ Space li    toggle inlay hints
 
 [d          previous diagnostic
 ]d          next diagnostic
-Space ld    line diagnostics
+Space ld    show full line diagnostics in a floating window
+Ctrl+w d    show diagnostic under cursor in a floating window (built into Neovim)
 Space lq    diagnostics list
 ```
 
@@ -211,11 +212,23 @@ Ctrl+Space  manually open completion
 Ctrl+e      close completion
 ```
 
+- markview - Markdown preview
+
+```
+Space mt    toggle preview for current buffer
+Space ms    toggle split view
+Space mh    toggle hybrid mode for current buffer
+```
+
 - lint - nvim-lint
 
 ```
 Space ll    lint current file
 ```
+
+### tmux
+
+- tpm
 
 ### zshrc
 

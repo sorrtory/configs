@@ -10,6 +10,11 @@ vim.opt.termguicolors = true
 vim.opt.signcolumn = "yes"
 vim.opt.cursorline = true
 
+-- Keymaps
+vim.keymap.set("n", "<M-z>", function()
+  vim.wo.wrap = not vim.wo.wrap
+end, { desc = "Toggle line wrap" })
+
 -- Better splits
 vim.opt.splitright = true
 vim.opt.splitbelow = true
