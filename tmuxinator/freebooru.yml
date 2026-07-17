@@ -1,0 +1,11 @@
+name: freebooru
+root: ~/Documents/BMSTU-practise
+startup_window: dev
+
+windows:
+  - dev:
+      layout: main-vertical
+      panes:
+        - nvim .
+        - # terminal
+        - # terminal

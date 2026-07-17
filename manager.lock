@@ -1,0 +1,33 @@
+# External runtime assets managed by ./manager.sh.
+#
+# Format:
+#   git-dir|name|repo|ref|target|optional_comma_separated_sparse_paths
+#   git-dir-link|name|repo|ref|clone_target|link_target
+#   path-link|name|||source_inside_clone|link_target
+#
+# Paths support $HOME, $XDG_DATA_HOME, $XDG_STATE_HOME, and
+# ${XDG_CONFIG_HOME:-$HOME/.config}.
+# ref can be a branch, tag, or commit. Use a commit for strict pinning.
+git-dir|tmux:tpm|https://github.com/tmux-plugins/tpm|e261deb1b47614eed3400089ce7197dc68acc4eb|$XDG_DATA_HOME/configs-manager/tmux/plugins/tpm
+git-dir|tmux:tmux-sensible|https://github.com/tmux-plugins/tmux-sensible|25cb91f42d020f675bb0a2ce3fbd3a5d96119efa|$XDG_DATA_HOME/configs-manager/tmux/plugins/tmux-sensible
+git-dir|tmux:tmux-resurrect|https://github.com/tmux-plugins/tmux-resurrect|cff343cf9e81983d3da0c8562b01616f12e8d548|$XDG_DATA_HOME/configs-manager/tmux/plugins/tmux-resurrect
+git-dir|tmux:tmux-continuum|https://github.com/tmux-plugins/tmux-continuum|0698e8f4b17d6454c71bf5212895ec055c578da0|$XDG_DATA_HOME/configs-manager/tmux/plugins/tmux-continuum
+
+# mpv sources. Only selected runtime paths are linked into the mpv config.
+git-dir|mpv:source:mpv|https://github.com/mpv-player/mpv|94335ab87ab225ca3e36e0faeac831639d3e1d4e|$XDG_DATA_HOME/configs-manager/mpv/mpv|TOOLS/lua/autoload.lua
+git-dir|mpv:source:sibwaf|https://github.com/sibwaf/mpv-scripts|e4fb662207e024f26d7763c9551e429898267974|$XDG_DATA_HOME/configs-manager/mpv/sibwaf-mpv-scripts|fuzzydir.lua,reload.lua
+git-dir|mpv:source:yuukidach|https://github.com/yuukidach/mpv-scripts|85cc0cfb101718aea1c7debeec61a6f851852f0f|$XDG_DATA_HOME/configs-manager/mpv/yuukidach-mpv-scripts|show_filename.lua
+git-dir|mpv:source:thumbfast|https://github.com/po5/thumbfast|0f711de3138c9bd6718209d819ac54022c23ded2|$XDG_DATA_HOME/configs-manager/mpv/thumbfast|thumbfast.lua
+git-dir|mpv:source:thumbfast-osc|https://github.com/po5/thumbfast|9d78edc167553ccea6290832982d0bc15838b4ac|$XDG_DATA_HOME/configs-manager/mpv/thumbfast-osc|player/lua/osc.lua
+git-dir|mpv:source:eisa01|https://github.com/Eisa01/mpv-scripts|b9e63743a858766c9cc7a801d77313b0cecdb049|$XDG_DATA_HOME/configs-manager/mpv/eisa01-mpv-scripts|scripts/SmartCopyPaste.lua
+git-dir|mpv:source:anime4k|https://github.com/bloc97/Anime4K|7684e9586f8dcc738af08a1cdceb024cc184f426|$XDG_DATA_HOME/configs-manager/mpv/Anime4K|glsl
+git-dir-link|mpv:mpv-cut|https://github.com/familyfriendlymikey/mpv-cut|3b18f1161ffb2ff822c88cb97e099772d4b3c26d|$XDG_DATA_HOME/configs-manager/mpv/mpv-cut|${XDG_CONFIG_HOME:-$HOME/.config}/mpv/scripts/mpv-cut
+
+path-link|mpv:autoload|||$XDG_DATA_HOME/configs-manager/mpv/mpv/TOOLS/lua/autoload.lua|${XDG_CONFIG_HOME:-$HOME/.config}/mpv/scripts/autoload.lua
+path-link|mpv:fuzzydir|||$XDG_DATA_HOME/configs-manager/mpv/sibwaf-mpv-scripts/fuzzydir.lua|${XDG_CONFIG_HOME:-$HOME/.config}/mpv/scripts/fuzzydir.lua
+path-link|mpv:reload|||$XDG_DATA_HOME/configs-manager/mpv/sibwaf-mpv-scripts/reload.lua|${XDG_CONFIG_HOME:-$HOME/.config}/mpv/scripts/reload.lua
+path-link|mpv:show-filename|||$XDG_DATA_HOME/configs-manager/mpv/yuukidach-mpv-scripts/show_filename.lua|${XDG_CONFIG_HOME:-$HOME/.config}/mpv/scripts/show_filename.lua
+path-link|mpv:thumbfast|||$XDG_DATA_HOME/configs-manager/mpv/thumbfast/thumbfast.lua|${XDG_CONFIG_HOME:-$HOME/.config}/mpv/scripts/thumbfast.lua
+path-link|mpv:osc|||$XDG_DATA_HOME/configs-manager/mpv/thumbfast-osc/player/lua/osc.lua|${XDG_CONFIG_HOME:-$HOME/.config}/mpv/scripts/osc.lua
+path-link|mpv:smart-copy-paste|||$XDG_DATA_HOME/configs-manager/mpv/eisa01-mpv-scripts/scripts/SmartCopyPaste.lua|${XDG_CONFIG_HOME:-$HOME/.config}/mpv/scripts/SmartCopyPaste.lua
+path-link|mpv:anime4k|||$XDG_DATA_HOME/configs-manager/mpv/Anime4K/glsl|${XDG_CONFIG_HOME:-$HOME/.config}/mpv/shaders/Anime4K

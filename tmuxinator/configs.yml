@@ -1,0 +1,9 @@
+name: configs
+root: ~/Documents/configs
+startup_window: editor
+
+windows:
+  - editor:
+      panes:
+        - ${EDITOR:-vim} .
+  - shell:

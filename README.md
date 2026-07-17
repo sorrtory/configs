@@ -14,6 +14,7 @@ My dotfiles are splitted into 3 repos:
 
 > - [dotbot](https://github.com/anishathalye/dotbot) is useless imho
 > - [chezmoi](https://github.com/twpayne/chezmoi) is better but still not that
+> - GNU stow is ok, but i need more
 > - Ansible is probably better than the current workflow, but it's actually kind of all the same
 > - My [install.sh](https://github.com/sorrtory/scripts?tab=readme-ov-file#installsh) with a [link.sh](https://github.com/sorrtory/scripts?tab=readme-ov-file#linksh--bootstrap)
 
@@ -51,6 +52,48 @@ reboot
 ```
 
 As the result, the script with the default installation config should download software, link configs, setup gnome, wireguard and then some.
+
+### External assets
+
+The tracked config files are linked into place by
+[`scripts/install.sh`](https://github.com/sorrtory/scripts/blob/master/install.sh).
+The scripts repo clones this configs repo when it is missing. After linking, it
+runs [`manager.sh`](./manager.sh) to restore mutable third-party runtime assets
+such as TPM.
+
+Keep these assets out of the configs repository when the upstream tool already
+manages installation and updates. This keeps fresh setup reproducible without
+committing downloaded files or pinning them as Git submodules.
+
+Run the manager directly when needed:
+
+```bash
+~/Documents/configs/manager.sh sync
+```
+
+`manager.lock` pins external runtime repositories by commit. `manager.sh sync`
+restores those pinned versions; updating the lock should be a deliberate step.
+
+For a small local change, edit the managed checkout under
+`~/.local/share/configs-manager`, save it as a patch in this repository, and
+reapply it after syncing:
+
+```bash
+mkdir -p ~/Documents/configs/patches/mpv-cut
+git -C ~/.local/share/configs-manager/mpv/mpv-cut diff > \
+  ~/Documents/configs/patches/mpv-cut/local.patch
+git -C ~/.local/share/configs-manager/mpv/mpv-cut restore .
+~/Documents/configs/manager.sh mpv
+git -C ~/.local/share/configs-manager/mpv/mpv-cut apply \
+  ~/Documents/configs/patches/mpv-cut/local.patch
+```
+
+Patch application is intentionally manual for now. Before changing a pinned
+commit, first preserve the diff as above. Then restore the managed checkout,
+update `manager.lock`, sync, and reapply the patch. `manager.sh check` reports a
+patched checkout as locally modified; that warning is expected until patch
+application becomes a lock-managed operation. Use a fork when the change grows
+into a maintained branch rather than a small local adjustment.
 
 ## Dotfiles list
 
@@ -91,6 +134,13 @@ https://vim.rtorr.com/
 - Nice [article](https://lazyvim-ambitious-devs.phillips.codes/) about LazyVim and vim basics
 
 - lazy.nvim
+
+General editing:
+
+```
+Ctrl+Shift+Up    move current line / selection up
+Ctrl+Shift+Down  move current line / selection down
+```
 
 #### Installation steps
 
@@ -207,7 +257,7 @@ Space lf    format buffer
 ```
 Tab         accept completion / snippet next / normal tab
 Shift+Tab   snippet previous / normal shift-tab
-Enter       accept too, because preset = "enter"
+Enter       insert newline
 Ctrl+Space  manually open completion
 Ctrl+e      close completion
 ```
@@ -228,7 +278,45 @@ Space ll    lint current file
 
 ### tmux
 
-- tpm
+- [tpm](https://github.com/tmux-plugins/tpm) - tmux plugin manager
+- [tmux-sensible](https://github.com/tmux-plugins/tmux-sensible) - conservative defaults
+- [tmux-resurrect](https://github.com/tmux-plugins/tmux-resurrect) - save and restore sessions
+- [tmux-continuum](https://github.com/tmux-plugins/tmux-continuum) - periodic saves
+- [tmuxinator](https://github.com/tmuxinator/tmuxinator) - deterministic project sessions
+
+TPM and its plugins are pinned in `manager.lock` and installed under
+`~/.local/share/configs-manager/tmux/plugins/`.
+Continuum automatically saves the tmux environment every 15 minutes.
+Resurrect stores machine-specific snapshots under
+`~/.local/state/tmux/resurrect/`, outside the configs repository.
+Automatic restore on tmux server startup is disabled. Use `t` to intentionally
+restore the last global snapshot, or `tp` to open a project session through
+tmuxinator.
+
+Tmuxinator project configs live under `~/.config/tmuxinator/`, linked from this
+repo's `tmuxinator/` directory. `tp` discovers those configs directly, so there
+is no separate project registry to keep in sync.
+
+On a fresh system there is no snapshot to restore yet. Start tmux and press
+`Ctrl+a Ctrl+s` once to create the initial `last` snapshot. Until then,
+`t` starts a plain `main` session.
+
+Resurrect restores sessions, windows, panes, layouts, working directories, and
+a conservative set of running programs. Optional pane-content restoration is
+not enabled.
+
+```
+t              attach to tmux, or restore the last global snapshot if no server exists
+tp             pick a tmuxinator project with fzf
+tp configs     open/switch to the configs project session
+Ctrl+a I      install plugins
+Ctrl+a U      update plugins
+Ctrl+a Alt+u  remove plugins no longer listed in tmux.conf
+Ctrl+a r      reload tmux config
+Ctrl+a Ctrl+s save tmux environment now
+Ctrl+a Ctrl+r restore tmux environment now
+Ctrl+a Ctrl+d save tmux environment now, then detach
+```
 
 ### zshrc
 
@@ -281,8 +369,9 @@ Arch-designed. Pretty the same, but have no powerkevek10k
   - [SmartCopyPaste](https://github.com/Eisa01/mpv-scripts?tab=readme-ov-file#smartcopypaste). Paste URI to mpv
   - [mpv cut](https://github.com/familyfriendlymikey/mpv-cut). Just cut video by `c` key
 - **shaders**
-  - [anime4k](https://github.com/bloc97/Anime4K). `ctrl+1` to optimized 1080p autoscale, `ctrl+0` to disalbe
-  - [ArtCNN](https://github.com/Artoriuz/ArtCNN). ???
+  - [anime4k](https://github.com/bloc97/Anime4K). `ctrl+1` to optimize 1080p autoscaling, `ctrl+0` to disable
+  - [ArtCNN](https://github.com/Artoriuz/ArtCNN). Not installed until an ArtCNN profile is configured.
+- Script and shader repositories are pinned in `manager.lock`, cloned under `~/.local/share/configs-manager/mpv`, and selectively linked into the mpv config by `manager.sh mpv`.
 - **mpv.conf** setup for high quality
 - **input.conf** setup for shaders and list of input default
 
@@ -372,10 +461,12 @@ Lean and blue
 
 - `Alt + y` = [copy file contents](https://yazi-rs.github.io/docs/resources/#:~:text=copy%2Dfile%2Dcontents%2Eyazi%20%2D%20A%20simple%20plugin%20to%20copy%20file%20contents%20just%20from%20Yazi%20without%20going%20into%20editor)
 
-To install plugins with `snap` pkg
+Plugins are locked in `yazi/package.toml`. `manager.sh yazi` locates the `ya`
+helper, including Snap installations, restores the locked packages under
+`~/.local/share/configs-manager/yazi/`, and links them into the Yazi config.
 
 ```bash
-/snap/yazi/current/ya pkg add grappas/wl-clipboard
+~/Documents/configs/manager.sh yazi
 ```
 
 [## MFW never used then ![Tight and blue](https://i.pinimg.com/736x/31/af/4a/31af4aa48effe217c831fcbc24d4d51e.jpg)]: #
