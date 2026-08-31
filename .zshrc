@@ -69,10 +69,87 @@ alias p!="PAGER=less"
 
 
 # tmux
-alias t="tmux new -A -s main"
+_tp_config_dir() {
+  print -r -- "${XDG_CONFIG_HOME:-$HOME/.config}/tmuxinator"
+}
+
+_tp_project_names() {
+  local dir file
+  dir="$(_tp_config_dir)"
+
+  [[ -d "$dir" ]] || return 0
+
+  for file in "$dir"/*.(yml|yaml)(N); do
+    print -r -- "${file:t:r}"
+  done | sort -u
+}
+
+_tmux_enter_session() {
+  local session="$1"
+
+  if [[ -n "$TMUX" ]]; then
+    tmux switch-client -t "=$session"
+  else
+    tmux attach-session -t "=$session"
+  fi
+}
+
+t() {
+  local resurrect_dir restore_script
+  resurrect_dir="${XDG_CONFIG_HOME:-$HOME/.config}/tmux/resurrect"
+  restore_script="${XDG_CONFIG_HOME:-$HOME/.config}/tmux/plugins/tmux-resurrect/scripts/restore.sh"
+
+  if tmux has-session 2>/dev/null; then
+    if [[ -n "$TMUX" ]]; then
+      tmux switch-client -l 2>/dev/null || tmux switch-client -t main
+    else
+      tmux attach-session
+    fi
+    return
+  fi
+
+  tmux new-session -d -s main
+
+  if [[ -x "$restore_script" && -e "$resurrect_dir/last" ]]; then
+    "$restore_script"
+  fi
+
+  tmux attach-session
+}
+
+tp() {
+  local project
+
+  if (( $# > 0 )); then
+    project="$1"
+  else
+    command -v fzf >/dev/null || {
+      echo "fzf is required for interactive project picking"
+      return 1
+    }
+
+    project="$(_tp_project_names | fzf --prompt='tmux project> ')"
+  fi
+
+  [[ -n "$project" ]] || return 0
+
+  command -v tmuxinator >/dev/null || {
+    echo "tmuxinator is not installed"
+    return 1
+  }
+
+  if ! tmux has-session -t "=$project" 2>/dev/null; then
+    tmuxinator start "$project" --no-attach || return
+  fi
+
+  _tmux_enter_session "$project"
+}
+
 ssht() {
   ssh -t "$1" 'tmux new -A -s ssh-main'
 }
+
+
 
 # Media
 
@@ -84,10 +161,93 @@ convert-to-mp3() {
     done
 }
 
-## yt-dlp
-alias download-mp3="yt-dlp --proxy $PROXY -x --audio-format mp3 --audio-quality 0"
-alias download-mp4="yt-dlp --proxy $PROXY -S res,ext:mp4:m4a --recode mp4"
+convert-to-mp4() {
+  if (( $# == 0 )); then
+    echo "Usage: convert-to-mp4 video1 [video2 ...]"
+    return 1
+  fi
 
+  command -v ffmpeg >/dev/null || { echo "ffmpeg not found"; return 1; }
+  command -v ffprobe >/dev/null || { echo "ffprobe not found"; return 1; }
+
+  for input in "$@"; do
+    if [[ ! -f "$input" ]]; then
+      echo "Skipping: $input is not a file"
+      continue
+    fi
+
+    local has_video
+    has_video="$(ffprobe -v error -select_streams v:0 \
+      -show_entries stream=index -of csv=p=0 "$input" 2>/dev/null | head -n 1)"
+
+    if [[ -z "$has_video" ]]; then
+      echo "Skipping: $input has no video stream"
+      continue
+    fi
+
+    local output="${input%.*}.mp4"
+
+    # Avoid trying to convert file.mp4 into itself.
+    if [[ "$input" == "$output" ]]; then
+      output="${input%.*}.converted.mp4"
+    fi
+
+    echo "Converting: $input -> $output"
+
+    ffmpeg -hide_banner \
+      -fflags +genpts \
+      -i "$input" \
+      -map '0:v:0' -map '0:a?' \
+      -sn -dn \
+      -vf "scale=ceil(iw*sar/2)*2:ceil(ih/2)*2,setsar=1,format=yuv420p" \
+      -c:v libx264 \
+      -preset medium \
+      -crf 23 \
+      -c:a aac \
+      -b:a 160k \
+      -ar 48000 \
+      -ac 2 \
+      -movflags +faststart \
+      -max_muxing_queue_size 4096 \
+      "$output"
+  done
+}
+
+mp3-to-mp4() {
+  if [ -z "$1" ]; then
+    echo "Usage: mp3-to-mp4 file.mp3"
+    return 1
+  fi
+
+  local input="$1"
+  local output="${2:-${input%.*}.mp4}"
+  local cover
+  cover="$(mktemp "${TMPDIR:-/tmp}/mp3cover.XXXXXX.jpg")"
+
+  ffmpeg -y -i "$input" -map 0:v:0 -frames:v 1 "$cover" || {
+    echo "No embedded cover found in: $input"
+    rm -f "$cover"
+    return 1
+  }
+
+  ffmpeg -y \
+    -loop 1 -framerate 1 -i "$cover" \
+    -i "$input" \
+    -map 0:v -map 1:a \
+    -map_metadata 1 \
+    -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2,format=yuv420p" \
+    -c:v libx264 -tune stillimage \
+    -c:a aac -b:a 320k \
+    -shortest -movflags +faststart \
+    "$output"
+
+  rm -f "$cover"
+}
+
+## yt-dlp
+alias download-mp3='yt-dlp --proxy "$PROXY" -x --audio-format mp3 --audio-quality 0 --embed-thumbnail --embed-metadata --embed-chapters --embed-info-json --convert-thumbnails jpg'
+
+alias download-mp4='yt-dlp --proxy "$PROXY" -S "res,ext:mp4:m4a" --recode mp4 --embed-thumbnail --embed-metadata --embed-chapters --embed-info-json --embed-subs --convert-thumbnails jpg'
 
 # System
 alias path="readlink -f"
@@ -172,6 +332,11 @@ function y() {
 alias dps='docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Ports}}"'
 alias dpss='docker ps --format "table {{.Names}}\t{{.Image}}\t{{.ID}}\t{{.RunningFor}}\t{{.Status}}\t{{.Size}}\t{{.Ports}}"'
 
+
+## git
+alias lg="lazygit"
+
+
 ##### Load #####
 
 # Node
@@ -237,3 +402,27 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # zoxide completions
 eval "$(zoxide init zsh)"
+
+# # >>> conda initialize >>>
+# # !! Contents within this block are managed by 'conda init' !!
+# __conda_setup="$('/home/z/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+# if [ $? -eq 0 ]; then
+#     eval "$__conda_setup"
+# else
+#     if [ -f "/home/z/miniconda3/etc/profile.d/conda.sh" ]; then
+#         . "/home/z/miniconda3/etc/profile.d/conda.sh"
+#     else
+#         export PATH="/home/z/miniconda3/bin:$PATH"
+#     fi
+# fi
+# unset __conda_setup
+# # <<< conda initialize <<<
+#
+#
+
+# tmux tp completions
+_tp_projects() {
+  compadd -- $(_tp_project_names)
+}
+
+compdef _tp_projects tp
