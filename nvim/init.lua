@@ -1,6 +1,15 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+-- GUI/session-launched Neovim may not inherit fnm's shell PATH.
+local fnm_node_bin = vim.env.HOME .. "/.local/share/fnm/aliases/default/bin"
+if vim.fn.isdirectory(fnm_node_bin) == 1 then
+  local path = vim.env.PATH or ""
+  if not (":" .. path .. ":"):find(":" .. fnm_node_bin .. ":", 1, true) then
+    vim.env.PATH = fnm_node_bin .. ":" .. path
+  end
+end
+
 -- Editor basics
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -14,6 +23,13 @@ vim.opt.cursorline = true
 vim.keymap.set("n", "<M-z>", function()
   vim.wo.wrap = not vim.wo.wrap
 end, { desc = "Toggle line wrap" })
+
+vim.keymap.set("n", "<C-S-Up>", ":move .-2<CR>==", { desc = "Move line up" })
+vim.keymap.set("n", "<C-S-Down>", ":move .+1<CR>==", { desc = "Move line down" })
+vim.keymap.set("i", "<C-S-Up>", "<Esc>:move .-2<CR>==gi", { desc = "Move line up" })
+vim.keymap.set("i", "<C-S-Down>", "<Esc>:move .+1<CR>==gi", { desc = "Move line down" })
+vim.keymap.set("v", "<C-S-Up>", ":move '<-2<CR>gv=gv", { desc = "Move selection up" })
+vim.keymap.set("v", "<C-S-Down>", ":move '>+1<CR>gv=gv", { desc = "Move selection down" })
 
 -- Better splits
 vim.opt.splitright = true
