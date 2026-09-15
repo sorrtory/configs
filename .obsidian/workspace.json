@@ -4,53 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "8c703e5d24f9c5d0",
+        "id": "d04c9bc2c8934b89",
         "type": "tabs",
         "children": [
           {
-            "id": "3488ec28f6f4c807",
+            "id": "6ed0b3830a432cc9",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Projects/01 IT/FreeBooru/TODO.md",
+                "file": "Knowledge/Mobile/VPN over hotspot.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TODO"
-            }
-          },
-          {
-            "id": "4e2637e33de803e6",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Knowledge/Computer/Common/Files encryption.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Files encryption"
-            }
-          },
-          {
-            "id": "5301e7638e286945",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Collections/Resources/Параши.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Параши"
+              "title": "VPN over hotspot"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -70,7 +41,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "Files"
@@ -123,8 +96,8 @@
             "state": {
               "type": "calendar",
               "state": {},
-              "icon": "lucide-ghost",
-              "title": "calendar"
+              "icon": "calendar-with-checkmark",
+              "title": "Calendar"
             }
           },
           {
@@ -203,9 +176,18 @@
               "icon": "lucide-archive",
               "title": "All properties"
             }
+          },
+          {
+            "id": "2a1ba3b97b3da045",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -226,56 +208,56 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "4e2637e33de803e6",
+  "active": "6ed0b3830a432cc9",
   "lastOpenFiles": [
-    "Diary/Daily/2026-01-29.md",
-    "Knowledge/Computer/Common/Files encryption.md",
-    "Diary/Daily/2026-01-05.md",
-    "Projects/01 IT/FreeBooru/TODO.md",
-    "Knowledge/Computer/Common/Bootable windows USB.md",
-    "Knowledge/Computer/Linux/Setup/KVM.md",
-    "Collections/Resources/Параши.md",
-    "Knowledge/Computer/Common/Storage && Synchronizing.md",
-    "Knowledge/Computer/Linux/Utility/ncdu.md",
-    "Diary/Daily/2026-01-28.md",
-    "Projects/Ideas.md",
-    "Knowledge/Computer/Linux/Hacks/White lists.md",
-    "Knowledge/Computer/Linux/Hacks/Change dns server for a domain.md",
-    "Knowledge/Computer/Linux/Hacks/Proxy for app.md",
-    "Knowledge/Computer/Linux/Check out.md",
-    "Knowledge/Computer/Linux/Hacks/Stego.md",
-    "Assets/Attachments/b2ap3largeDISC-matrix-1.webp",
-    "Collections/Tech/Software/Internet chatting.md",
-    "Diary/Daily/2026-01-27.md",
-    "Projects/01 IT/FreeBooru/Plan.md",
-    "Projects/01 IT/FreeBooru/app flow schema.md",
-    "Projects/01 IT/FreeBooru/UX.md",
-    "Projects/01 IT/FreeBooru/Inspiration.md",
-    "Projects/01 IT/FreeBooru/Config.md",
-    "Projects/01 IT/FreeBooru/Indexing DB.md",
-    "Projects/01 IT/FreeBooru/Motivation.md",
-    "Projects/01 IT/FreeBooru/Tag.md",
-    "Assets/Attachments/Pasted image 20260123232608.png",
-    "Assets/Attachments/Pasted image 20260123232221.png",
-    "Assets/Attachments/Pasted image 20260114214632.png",
-    "Assets/Attachments/Pasted image 20260114214157.png",
-    "Assets/Attachments/Pasted image 20251121201434.png",
-    "Assets/Attachments/Pasted image 20251122043531.png",
-    "Assets/Attachments/Pasted image 20251122221656.png",
-    "Assets/Attachments/Pasted image 20260114214056.png",
-    "Projects/01 IT/FreeBooru",
-    "Knowledge/Computer/Programming/C",
-    "Untitled.canvas",
-    "Assets/Attachments/Pasted image 20251218001622.png",
-    "github.com/athrael-soju",
-    "github.com",
-    "Knowledge/Computer/Programming/Regex",
+    "Knowledge/Git/git leaks.md",
+    "Knowledge/Linux/Setup/nix.md",
+    "Knowledge/Linux/Ricing/Nixos.md",
+    "Collections/Software/Alist.md",
+    "Collections/Software/borgbackup.md",
+    "VPN and Proxies.md",
+    "Knowledge/Common/Files encryption.md",
+    "Knowledge/Common/Upscale.md",
+    "Diary/Daily/2026-08-18.md",
+    "Diary/Daily/2026-08-17.md",
+    "Diary/Daily/2026-08-16.md",
+    "Diary/Daily/2026-08-14.md",
+    "Diary/Daily/2026-07-28.md",
+    "Zettelkasten/Дрочка.md",
+    "Collections/Resources/Onion.md",
+    "Collections/Resources/Shops.md",
+    "Zettelkasten/Настраиваем SNI.md",
+    "Knowledge/Linux/Setup/telemt.md",
+    "Collections/Resources/Proxies.md",
+    "Diary/Daily/2026-08-15.md",
+    "Projects/01 IT/Net Lab/Drawing 2026-08-14 18.11.22.excalidraw.md",
+    "Projects/01 IT/Net Lab/Untitled.md",
+    "Collections/Resources/Torrent trackers.md",
+    "Projects/01 IT/Net Lab",
+    "Diary/Daily/2026-08-05.md",
+    "Knowledge/Linux/Utility/ss.md",
+    "Diary/Daily/2026-07-30.md",
+    "Assets/Attachments/Screenshot From 2026-07-26 05-09-54.png",
+    "Assets/Attachments/image.png",
+    "Knowledge/Programming/Agents",
     "Diary/anxiety.canvas",
-    "Projects/Food",
-    "Knowledge/Computer/Graphics",
-    "Collections/Tech/Untitled",
-    "Knowledge/Computer/Devops/Ansible",
-    "Knowledge/Computer/Devops/Kuber",
+    "Projects/02 Songmaking/Completed/Без тебя/Without u tabs.png",
+    "hacks",
+    "Knowledge/Computer/Linux/Ricing/Untitled",
+    "Assets/Attachments/Pasted image 20260415235157.png",
+    "Assets/Attachments/Pasted image 20260412220703.png",
+    "Collections/Tech/Hardware",
+    "Assets/Attachments/Pasted image 20260407173230.png",
+    "Assets/Attachments/Pasted image 20260407160628.png",
+    "Knowledge/Mobile",
+    "Knowledge/Computer/Windows",
+    "Untitled.base",
+    "Collections/Resources/Untitled.base",
+    "Knowledge/Crypto",
+    "Assets/Attachments/Pasted image 20260225223520.png",
+    "Assets/Attachments/b2ap3largeDISC-matrix-1.webp",
+    "Assets/Attachments/Pasted image 20260123232608.png",
+    "Untitled.canvas",
     "University/Stat-RK1.canvas"
   ]
 }
